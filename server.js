@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const User = require('./models/User'); 
 require('dotenv').config();
 
@@ -34,11 +35,46 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
+// Contact Us Route
+app.post('/contact', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  // Validate input
+  if (!name || !email || !message) {
+    return res.status(400).send('All fields are required');
+  }
+
+  // Create transporter
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  // Set up email data
+  const mailOptions = {
+    from: email,
+    to: 'abhisherkbhardwaj0046@gmail.com',
+    subject: `Contact Us Form Submission from ${name}`,
+    text: `Message from: ${name}\n\nEmail: ${email}\n\nMessage:\n${message}`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).send('Message sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+// Other routes
 app.get("/", (req, res) => {
   res.json("done");
 });
 
-// Retrieve user's favorites
 app.get('/favorites', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.userId).populate('favorites');
@@ -96,3 +132,9 @@ const moviesRoutes = require('./routes/movies');
 
 app.use('/auth', authRoutes);
 app.use('/movies', moviesRoutes);
+
+// Error handling middleware (optional but recommended)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
