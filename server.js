@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User'); 
 require('dotenv').config();
@@ -10,7 +9,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: 'https://abmoviess.netlify.app/',
+  origin: 'https://abmoviess.netlify.app',
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -20,7 +19,6 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI)
   .then(() => app.listen(process.env.PORT || 5000, () => console.log(`Server running on port ${process.env.PORT || 5000}`)))
   .catch(err => console.log(err));
-
 
 // Middleware to check authentication
 const authMiddleware = (req, res, next) => {
@@ -33,10 +31,11 @@ const authMiddleware = (req, res, next) => {
     next();
   });
 };
-app.get("/",(req,res)=>
-{
-    res.json("done");
-})
+
+app.get("/", (req, res) => {
+  res.json("done");
+});
+
 // Retrieve user's favorites
 app.get('/favorites', authMiddleware, async (req, res) => {
   try {
@@ -93,7 +92,5 @@ app.post('/favorites/remove', authMiddleware, async (req, res) => {
 const authRoutes = require('./routes/auth');
 const moviesRoutes = require('./routes/movies');
 
-
 app.use('/auth', authRoutes);
-
 app.use('/movies', moviesRoutes);
