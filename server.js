@@ -33,7 +33,10 @@ const authMiddleware = (req, res, next) => {
     next();
   });
 };
-
+app.get("/",(req,res)=>
+{
+    res.json("done");
+})
 // Retrieve user's favorites
 app.get('/favorites', authMiddleware, async (req, res) => {
   try {
