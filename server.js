@@ -9,7 +9,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: 'https://abmoviess.netlify.app', // Ensure no trailing slash here
+  origin: 'https://66cad71b4600d7be67d95137--abmoviess.netlify.app', // Ensure no trailing slash here
   credentials: true,
 };
 app.use(cors(corsOptions));
