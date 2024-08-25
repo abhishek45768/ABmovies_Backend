@@ -85,3 +85,11 @@ app.post('/favorites/remove', authMiddleware, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+const authRoutes = require('./routes/auth');
+const moviesRoutes = require('./routes/movies');
+
+
+app.use('/auth', authRoutes);
+
+app.use('/movies', moviesRoutes);
